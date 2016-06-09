@@ -1,0 +1,9 @@
+program="uncrustify"
+condition=$(which $program 2>/dev/null | grep -v "not found" | wc -l)
+
+if [ $condition -eq 0 ] ; then
+  echo "error: $program is not installed"
+  echo "warning: brew install $program"
+else
+  sh ${SRCROOT}/formatter/scripts/formatAllSources.sh <CLASSES ..>
+fi
