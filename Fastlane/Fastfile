@@ -1,0 +1,45 @@
+fastlane_version "1.90.0"
+
+default_platform :ios
+
+platform :ios do
+
+  def load_keys
+    begin
+      import("keys")
+    rescue => exception
+      UI.error("fastlane/keys file not found.")
+      raise exception
+    end
+  end
+
+  desc "Runs all the tests"
+  lane :test do
+    cocoapods
+    scan(scheme:"NavApp",
+         clean: true)
+  end
+
+  desc "Build <NAME APP>"
+  lane :ipa do
+    cocoapods
+    gym(scheme: "<NAME SCHEMA>", use_legacy_build_api: true)
+  end
+
+  desc "Send iOS Application to Farbic"
+  lane :fabric do
+    load_keys
+    cocoapods
+
+    fetched_version = sh("cd .. && agvtool what-marketing-version -terse1 | tr -d '\n'")
+    build_number = fetched_version
+
+    raise "Build Number" unless build_number != nil
+
+    gym(scheme: "<NAME SCHEMA>", use_legacy_build_api: true)
+    crashlytics(api_token: ENV["CRASHLYTICS_API_TOKEN"],
+                build_secret: ENV["CRASHLYTICS_BUILD_SECRET"])
+    clean_build_artifacts
+  end
+
+end
