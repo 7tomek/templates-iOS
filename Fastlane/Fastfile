@@ -38,7 +38,9 @@ platform :ios do
 
     gym(scheme: "<NAME SCHEMA>", use_legacy_build_api: true)
     crashlytics(api_token: ENV["CRASHLYTICS_API_TOKEN"],
-                build_secret: ENV["CRASHLYTICS_BUILD_SECRET"])
+                build_secret: ENV["CRASHLYTICS_BUILD_SECRET"],
+                groups: ["<NAME ALIAS GROUPS>"])
+
     clean_build_artifacts
   end
 
